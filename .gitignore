@@ -1,0 +1,8 @@
+proj
+.DS_Store
+*~
+*.swp
+*.swo
+train/
+test/
+dev/
