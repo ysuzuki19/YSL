@@ -1,59 +1,64 @@
 #ifndef YSL_LIST_HPP
 #define YSL_LIST_HPP
+
 #pragma once
 #include <iostream>
 #include <vector>
-using namespace std;
 
 namespace YSL{
-template <class _TYPE>
-class list {
-	struct _node{
-		_TYPE value = NULL;
-		_node* next = nullptr;
-		_node* prev = nullptr;
+	template <class _TYPE>
+	class list {
+
+		struct _node{
+			_TYPE value = NULL;
+			_node* next = nullptr;
+			_node* prev = nullptr;
+		};
+
+		private:
+			_node* _head = nullptr;
+			_node* _tail = nullptr;
+			bool _isRandomAccessable = false;
+			std::size_t _size = 0;
+			_node** _randomAccessPtr = nullptr;
+			std::size_t _randomAccessPtrSize = 0;
+			auto get_ptr(std::size_t idx);
+
+		public:
+			list(){}
+			list(const std::vector<_TYPE>& v){ for(const _TYPE& e : v) push_back(e); }
+			list(std::initializer_list<_TYPE> init_list){ for(auto p=init_list.begin(); p!=init_list.end(); ++p) push_back(*p); }
+			list(std::pair<std::size_t, _TYPE> init_pair){ for(std::size_t i=0; i<init_pair.first; ++i) push_back(init_pair.second); }
+			_TYPE front();
+			_TYPE back();
+			_TYPE get(std::size_t idx);
+			void set(std::size_t idx, _TYPE input);
+			void push_back(_TYPE input);
+			void push_front(_TYPE input);
+			void insert(std::size_t idx, _TYPE input);
+			void pop_back();
+			void pop_front();
+			void erase(std::size_t idx);
+			void swap(std::size_t idx_1, std::size_t idx_2);
+			void clear();
+			void reverse();
+			void toRandomAccessable();
+			void view();
+			void rview();
+			void memView();
+			bool isRandomAccessable(){ return _isRandomAccessable; }
+			bool empty(){ return (_size==0? true : false); }
+			std::size_t size(){ return _size; }
+			std::vector<_TYPE> to_vector();
+			void convert(std::vector<_TYPE>& v);
+			void add(std::vector<_TYPE>& v);
+			void load(std::vector<_TYPE>& v);
+
 	};
-	private:
-		_node* _head = nullptr;
-		_node* _tail = nullptr;
-		bool _isRandomAccessable = false;
-		std::size_t _size = 0;
-		_node** _randomAccessPtr = nullptr;
-		std::size_t _randomAccessPtrSize = 0;
-		auto get_ptr(std::size_t idx);
-	public:
-		list(){}
-		list(const std::vector<_TYPE>& v){ for(const _TYPE& e : v) push_back(e); }
-		list(std::initializer_list<_TYPE> init_list){ for(auto p=init_list.begin(); p!=init_list.end(); ++p) push_back(*p); }
-		list(std::pair<std::size_t, _TYPE> init_pair){ for(std::size_t i=0; i<init_pair.first; ++i) push_back(init_pair.second); }
-		_TYPE front();
-		_TYPE back();
-		_TYPE get(std::size_t idx);
-		void set(std::size_t idx, _TYPE input);
-		void push_back(_TYPE input);
-		void push_front(_TYPE input);
-		void insert(std::size_t idx, _TYPE input);
-		void pop_back();
-		void pop_front();
-		void erase(std::size_t idx);
-		void swap(std::size_t idx_1, std::size_t idx_2);
-		void clear();
-		void reverse();
-		void toRandomAccessable();
-		void view();
-		void rview();
-		void memView();
-		bool isRandomAccessable(){ return _isRandomAccessable; }
-		bool empty(){ return (_size==0? true : false); }
-		std::size_t size(){ return _size; }
-		std::vector<_TYPE> to_vector();
-		void convert(std::vector<_TYPE>& v);
-		void add(std::vector<_TYPE>& v);
-		void load(std::vector<_TYPE>& v);
-};
 }
 
-template <typename _TYPE> auto  YSL::list<_TYPE>::get_ptr(std::size_t idx){
+template <typename _TYPE>
+auto  YSL::list<_TYPE>::get_ptr(std::size_t idx){
 	if(_isRandomAccessable){
 		return _randomAccessPtr[idx];
 	}else{
@@ -68,7 +73,9 @@ template <typename _TYPE> auto  YSL::list<_TYPE>::get_ptr(std::size_t idx){
 		}
 	}
 }
-template <typename _TYPE> _TYPE YSL::list<_TYPE>::front(){
+
+template <typename _TYPE>
+_TYPE YSL::list<_TYPE>::front(){
 	if(_size==0){
 		std::cerr << "[ERROR] : In list.front(), list has no data." << std::endl;
 		exit(1);
@@ -76,7 +83,9 @@ template <typename _TYPE> _TYPE YSL::list<_TYPE>::front(){
 		return _head->value;
 	}
 }
-template <typename _TYPE> _TYPE YSL::list<_TYPE>::back(){
+
+template <typename _TYPE>
+_TYPE YSL::list<_TYPE>::back(){
 	if(_size==0){
 		std::cerr << "[ERROR] : In list.back(), list has no data." << std::endl;
 		exit(1);
@@ -86,7 +95,9 @@ template <typename _TYPE> _TYPE YSL::list<_TYPE>::back(){
 		return _tail->value;
 	}
 }
-template <typename _TYPE> _TYPE YSL::list<_TYPE>::get(std::size_t idx){
+
+template <typename _TYPE>
+_TYPE YSL::list<_TYPE>::get(std::size_t idx){
 	if(_size==0){
 		std::cerr << "[ERROR] : In list.get(idx), list has no data." << std::endl;
 		exit(1);
@@ -97,7 +108,9 @@ template <typename _TYPE> _TYPE YSL::list<_TYPE>::get(std::size_t idx){
 		return get_ptr(idx)->value;
 	}
 }
-template <typename _TYPE> void YSL::list<_TYPE>::set(std::size_t idx, _TYPE input){
+
+template <typename _TYPE>
+void YSL::list<_TYPE>::set(std::size_t idx, _TYPE input){
 	if(_size==0){
 		std::cerr << "[ERROR] : In list.set(idx, input), list has no data." << std::endl;
 		exit(1);
@@ -108,7 +121,9 @@ template <typename _TYPE> void YSL::list<_TYPE>::set(std::size_t idx, _TYPE inpu
 		get_ptr(idx)->value = input;
 	}
 }
-template <typename _TYPE> void  YSL::list<_TYPE>::push_back(_TYPE input){
+
+template <typename _TYPE>
+void  YSL::list<_TYPE>::push_back(_TYPE input){
 	if(_size == 0){
 		_head = new _node;
 		(*_head) = {input, nullptr, nullptr};
@@ -127,7 +142,9 @@ template <typename _TYPE> void  YSL::list<_TYPE>::push_back(_TYPE input){
 	_isRandomAccessable = false;
 	_size++;
 }
-template <typename _TYPE> void  YSL::list<_TYPE>::push_front(_TYPE input){
+
+template <typename _TYPE>
+void  YSL::list<_TYPE>::push_front(_TYPE input){
 	if(_size == 0){
 		_head = new _node;
 		_head->value = input;
@@ -151,7 +168,9 @@ template <typename _TYPE> void  YSL::list<_TYPE>::push_front(_TYPE input){
 	_isRandomAccessable = false;
 	_size++;
 }
-template <typename _TYPE> void  YSL::list<_TYPE>::insert(std::size_t idx, _TYPE input){
+
+template <typename _TYPE>
+void  YSL::list<_TYPE>::insert(std::size_t idx, _TYPE input){
 	if(_size < idx){
 		std::cerr << "[ERROR] : In list.insert(idx, input), list doesn't have idx=" << idx << " number data." << std::endl;
 		exit(1);
@@ -176,7 +195,9 @@ template <typename _TYPE> void  YSL::list<_TYPE>::insert(std::size_t idx, _TYPE 
 	_isRandomAccessable = false;
 	_size++;
 }
-template <typename _TYPE> void  YSL::list<_TYPE>::erase(std::size_t idx){
+
+template <typename _TYPE>
+void  YSL::list<_TYPE>::erase(std::size_t idx){
 	if(idx < 0){
 		std::cerr << "[ERROR] : In list.erase(idx), Please idx>=0" << std::endl;
 		exit(1);
@@ -207,7 +228,9 @@ template <typename _TYPE> void  YSL::list<_TYPE>::erase(std::size_t idx){
 		_size--;
 	}
 }
-template <typename _TYPE> void  YSL::list<_TYPE>::pop_back(){
+
+template <typename _TYPE>
+void  YSL::list<_TYPE>::pop_back(){
 	if(_size == 0){
 		std::cerr << "[ERROR] : In list.pop_back(), list has no data." << std::endl;
 		exit(1);
@@ -223,7 +246,9 @@ template <typename _TYPE> void  YSL::list<_TYPE>::pop_back(){
 		_size--;
 	}
 }
-template <typename _TYPE> void  YSL::list<_TYPE>::pop_front(){
+
+template <typename _TYPE>
+void  YSL::list<_TYPE>::pop_front(){
 	if(_size == 0){
 		std::cerr << "[ERROR] : In list.pop_front(), list has no data." << std::endl;
 		exit(1);
@@ -241,7 +266,9 @@ template <typename _TYPE> void  YSL::list<_TYPE>::pop_front(){
 	_isRandomAccessable = false;
 	_size--;
 }
-template <typename _TYPE> void  YSL::list<_TYPE>::clear(){
+
+template <typename _TYPE>
+void  YSL::list<_TYPE>::clear(){
 	_node* p_itr = _head;
 	delete[] _randomAccessPtr;
 	while(p_itr != _tail){
@@ -252,7 +279,9 @@ template <typename _TYPE> void  YSL::list<_TYPE>::clear(){
 	_isRandomAccessable = false;
 	_size = 0;
 }
-template <typename _TYPE> void  YSL::list<_TYPE>::swap(std::size_t idx_1, std::size_t idx_2){
+
+template <typename _TYPE>
+void  YSL::list<_TYPE>::swap(std::size_t idx_1, std::size_t idx_2){
 	if(idx_1 > idx_2) std::swap(idx_1, idx_2);
 	_node* p_1;
 	_node* p_2 = _head;
@@ -263,7 +292,9 @@ template <typename _TYPE> void  YSL::list<_TYPE>::swap(std::size_t idx_1, std::s
 	std::swap(p_1->value, p_2->value);
 	_isRandomAccessable = false;
 }
-template <typename _TYPE> void  YSL::list<_TYPE>::reverse(){
+
+template <typename _TYPE>
+void  YSL::list<_TYPE>::reverse(){
 	_node* p_itr = _head;
 	while(p_itr != nullptr){
 		std::swap(p_itr->next, p_itr->prev);
@@ -272,7 +303,9 @@ template <typename _TYPE> void  YSL::list<_TYPE>::reverse(){
 	std::swap(_head, _tail);
 	_isRandomAccessable = false;
 }
-template <typename _TYPE> void  YSL::list<_TYPE>::view(){
+
+template <typename _TYPE>
+void  YSL::list<_TYPE>::view(){
 	if(_size==0){
 		std::cerr << "[WARNING] : In list.view(), list has no data." << std::endl;
 		return;
@@ -293,7 +326,9 @@ template <typename _TYPE> void  YSL::list<_TYPE>::view(){
 	}
 	return;
 }
-template <typename _TYPE> void  YSL::list<_TYPE>::rview(){
+
+template <typename _TYPE>
+void  YSL::list<_TYPE>::rview(){
 	if(_size==0){
 		std::cerr << "[WARNING] : In list.rview(), list has no data." << std::endl;
 		return;
@@ -314,7 +349,9 @@ template <typename _TYPE> void  YSL::list<_TYPE>::rview(){
 	}
 	return;
 }
-template <typename _TYPE> void  YSL::list<_TYPE>::memView(){
+
+template <typename _TYPE>
+void  YSL::list<_TYPE>::memView(){
 	if(_size==0){
 		std::cerr << "[WARNING] : In list.view(), list has no data." << std::endl;
 		return;
@@ -335,7 +372,9 @@ template <typename _TYPE> void  YSL::list<_TYPE>::memView(){
 	}
 	return;
 }
-template <typename _TYPE> void  YSL::list<_TYPE>::toRandomAccessable(){
+
+template <typename _TYPE>
+void  YSL::list<_TYPE>::toRandomAccessable(){
 	if(_isRandomAccessable){
 		return;
 	}else{
@@ -350,7 +389,9 @@ template <typename _TYPE> void  YSL::list<_TYPE>::toRandomAccessable(){
 		_isRandomAccessable = true;
 	}
 }
-template <typename _TYPE> std::vector<_TYPE> YSL::list<_TYPE>::to_vector(){
+
+template <typename _TYPE>
+std::vector<_TYPE> YSL::list<_TYPE>::to_vector(){
 	std::vector<_TYPE> v(_size);
 	_node* p = _head;
 	for(std::size_t i=0; i<_size; ++i){
@@ -359,7 +400,9 @@ template <typename _TYPE> std::vector<_TYPE> YSL::list<_TYPE>::to_vector(){
 	}
 	return v;
 }
-template <typename _TYPE> void YSL::list<_TYPE>::convert(std::vector<_TYPE>& v){
+
+template <typename _TYPE>
+void YSL::list<_TYPE>::convert(std::vector<_TYPE>& v){
 	v.resize(_size);
 	_node* p = _head;
 	for(std::size_t i=0; i<_size; ++i){
@@ -367,15 +410,20 @@ template <typename _TYPE> void YSL::list<_TYPE>::convert(std::vector<_TYPE>& v){
 		p = p->next;
 	}
 }
-template <typename _TYPE> void YSL::list<_TYPE>::add(std::vector<_TYPE>& v){
+
+template <typename _TYPE>
+void YSL::list<_TYPE>::add(std::vector<_TYPE>& v){
 	for(std::size_t i=0; i<v.size(); ++i){
 		push_back(v[i]);
 	}
 }
-template <typename _TYPE> void YSL::list<_TYPE>::load(std::vector<_TYPE>& v){
+
+template <typename _TYPE>
+void YSL::list<_TYPE>::load(std::vector<_TYPE>& v){
 	clear();
 	for(std::size_t i=0; i<v.size(); ++i){
 		push_back(v[i]);
 	}
 }
+
 #endif
