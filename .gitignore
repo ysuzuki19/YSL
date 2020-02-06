@@ -3,6 +3,4 @@ proj
 *~
 *.swp
 *.swo
-train/
-test/
 dev/
